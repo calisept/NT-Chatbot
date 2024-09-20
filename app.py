@@ -69,7 +69,7 @@ safety_settings = [
     ),
 ]
 
-st.set_page_config(page_title="SengoDemo", page_icon="assets/SMART_logo_clear.png")
+st.set_page_config(page_title="Buddy Bot 🤖", page_icon="assets/SMART_logo_clear.png")
 
 def reset_chat():
     st.session_state["messages"] = [{"role": "assistant", "content": "Hey there! 👋 I’m your chat buddy! What fun stuff are you up to today? ✨"}]
@@ -92,7 +92,6 @@ st.markdown(
     div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
         position: sticky;
         top: 2.875rem;
-        background-color: white;
         z-index: 999;
     }
 </style>
