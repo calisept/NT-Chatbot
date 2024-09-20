@@ -2,8 +2,6 @@ import os
 import vertexai
 from vertexai.generative_models import GenerativeModel, SafetySetting
 import streamlit as st
-from PIL import Image
-import io
 
 
 PROJECT_ID = os.environ.get("GCP_PROJECT")  # Your Google Cloud Project ID
@@ -75,26 +73,63 @@ def reset_chat():
     st.session_state["messages"] = [{"role": "assistant", "content": "Hey there! 👋 I’m your chat buddy! What fun stuff are you up to today? ✨"}]
     st.session_state.chat_history = None
 
+
+@st.dialog("Welcome to 🐶 Buddy Bot! 🤖", width="large")
+def choose_avatar():
+    st.write("Choose an avatar 🤔")
+    avatars = {
+        "chicken": "assets/chicken.png",
+        "dog": "assets/dog.png",
+        "meerkat": "assets/meerkat.png",
+        "polar-bear": "assets/polar-bear.png",
+        "woman": "assets/woman.png",
+        "man": "assets/man.png" 
+    }
+
+    cols = st.columns(len(avatars))
+    
+    for i, (name, image) in enumerate(avatars.items()):
+        with cols[i]:
+            st.image(image, width=100)
+            if st.button(" ☝️  ", key=name):
+                st.session_state.avatar = name
+                st.session_state.avatar_picked = True
+                st.rerun()
+
+    # This line can be omitted if you want to set `avatar_picked` only on button press
+    st.session_state.avatar_picked = True
+
+user_image = f"assets/{st.session_state.avatar}.png" if "avatar" in st.session_state else "assets/user.png"
 header = st.container()
 with header:
     st.image("assets/SMART_logo_clear.png", width=80)
-    left, right = st.columns([0.7, 0.3], vertical_alignment="bottom")
-    left.title("🐶Buddy Bot🤖")
-    right.button('Reset Chat', on_click=reset_chat)
+    col1, col2, col3 = st.columns([0.7, 0.15, 0.05], vertical_alignment="bottom")
+    col1.title("🐶Buddy Bot🤖")
+    col2.button('Reset Chat', on_click=reset_chat)
+    col3.button('👤', on_click=choose_avatar)
     st.subheader(":grey[_Demo App_]", divider="rainbow")
 
 header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
 
+if "avatar_picked" not in st.session_state:
+    choose_avatar()
+
 ### Custom CSS for the sticky header
 st.markdown(
     """
-<style>
-    div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
-        position: sticky;
-        top: 2.875rem;
-        z-index: 999;
+    <style>
+    .reportview-container {
+        background-color: white
+        border-radius: 10px;  /* Optional: Rounded corners */
     }
-</style>
+
+    @media (prefers-color-scheme: dark) {
+        .reportview-container {
+            background-color: rgba(30, 30, 30, 0.8); 
+            color: white;  
+        }
+    }
+    </style>
     """,
     unsafe_allow_html=True
 )
@@ -106,12 +141,12 @@ for msg in st.session_state.messages:
     if msg["role"] == "assistant":
         st.chat_message(msg["role"], avatar="assets/robot.png").write(msg["content"])
     else:
-        st.chat_message(msg["role"], avatar="assets/user.png").write(msg["content"])
+        st.chat_message(msg["role"], avatar=user_image).write(msg["content"])
 
 if prompt := st.chat_input():
 
     st.session_state.messages.append({"role": "user", "content": prompt})
-    st.chat_message("user", avatar="assets/user.png").write(prompt)
+    st.chat_message("user", avatar=user_image).write(prompt)
 
     # with st.spinner('Preparing'):
 
