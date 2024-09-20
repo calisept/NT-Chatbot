@@ -72,13 +72,8 @@ safety_settings = [
 st.set_page_config(page_title="SengoDemo", page_icon="assets/SMART_logo_clear.png")
 
 def reset_chat():
-    st.session_state["messages"] = [{"role": "assistant", "content": "Hello! 🎉 I’m your chat buddy, ready to talk about whatever’s on your mind. What’s up?👋🏻"}]
+    st.session_state["messages"] = [{"role": "assistant", "content": "Hey there! 👋 I’m your chat buddy! What fun stuff are you up to today? ✨"}]
     st.session_state.chat_history = None
-
-# st.image("assets/SMART_logo_clear.png", width=80)
-# left, right = st.columns([0.7, 0.3], vertical_alignment="bottom")
-# left.title("🐶Buddy Bot🤖")
-# right.button('Reset Chat', on_click=reset_chat)
 
 header = st.container()
 with header:
@@ -106,7 +101,7 @@ st.markdown(
 )
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "Hello! 👋🏻 I’m your chat buddy, ready to talk about whatever’s on your mind. What’s up?✌🏼"}]
+    st.session_state["messages"] = [{"role": "assistant", "content": "Hey there! 👋 I’m your chat buddy! What fun stuff are you up to today? ✨"}]
 
 for msg in st.session_state.messages:
     if msg["role"] == "assistant":
@@ -128,6 +123,4 @@ if prompt := st.chat_input():
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant", avatar="assets/robot.png").write(msg)
 
-# with st.sidebar:
-#     st.button('Reset Chat', on_click=reset_chat)
 
