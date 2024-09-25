@@ -18,7 +18,7 @@ def multiturn_generate_content(chat_history, human_input):
         Human: {human_input}
         Chatbot:"""
 
-  chat = model.start_chat()
+  chat = model.start_chat(response_validation=False)
   response = chat.send_message(prompt, generation_config=generation_config, safety_settings=safety_settings)
 
   return response.text
@@ -35,7 +35,7 @@ Foster Companionship: Build rapport by remembering their interests and preferenc
 Communication Style:
 Use age-appropriate language that resonates with pre-teens.
 Keep responses simple and clear.
-Incorporate relatable references and emojis to enhance engagement.
+Incorporate real references and emojis to enhance engagement.
 
 Guidelines:
 Focus on one topic or question at a time.
@@ -51,19 +51,19 @@ generation_config = {
 safety_settings = [
     SafetySetting(
         category=SafetySetting.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-        threshold=SafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
     ),
     SafetySetting(
         category=SafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold=SafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
     ),
     SafetySetting(
         category=SafetySetting.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-        threshold=SafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
     ),
     SafetySetting(
         category=SafetySetting.HarmCategory.HARM_CATEGORY_HARASSMENT,
-        threshold=SafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
     ),
 ]
 
@@ -149,12 +149,18 @@ if prompt := st.chat_input():
     st.chat_message("user", avatar=user_image).write(prompt)
 
     # with st.spinner('Preparing'):
+    try:
+        msg = multiturn_generate_content(chat_history=st.session_state, human_input=prompt)
 
-    msg = multiturn_generate_content(chat_history=st.session_state, human_input=prompt)
+        st.session_state.messages.append({"role": "assistant", "content": msg})
+        st.chat_message("assistant", avatar="assets/robot.png").write(msg)
+    except ValueError as e:
+        if "The candidate is likely blocked by the safety filters." in str(e):
+            st.warning("Sorry, I can't respond to that. Please try a different message.")
+        else:
+            st.warning(f"An error occurred: {str(e)}")
+    except Exception as e:
+        st.warning(f"An unexpected error occurred: {str(e)}")
 
-    #st.write(msg)
-
-    st.session_state.messages.append({"role": "assistant", "content": msg})
-    st.chat_message("assistant", avatar="assets/robot.png").write(msg)
 
 
