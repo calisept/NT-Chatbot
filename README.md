@@ -14,6 +14,13 @@ A demo chat bot to engage young children
 - Chat with configured vertex ai targeted young children
 - Avatar selection 
 
+## Prerequisite
+Python ver 3.10 
+
+Install gcloud CLI via the site https://cloud.google.com/sdk/docs/install 
+- Window users are recommended to run the PowerShell command to install
+- Login to team account, and use lean-ehm-test project
+
 ## Installation
 
 To get a local copy up and running, follow these steps:
@@ -34,6 +41,11 @@ To get a local copy up and running, follow these steps:
     ```
 
 4. **Activate the virtual environment**:
+   - On Git Bash:
+    ```bash
+     cd venv/
+     source ./Scripts/activate
+    ```
    - On Windows:
      ```bash
      venv\Scripts\activate
